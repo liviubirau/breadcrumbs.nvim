@@ -52,6 +52,9 @@ M.get_filename = function()
       hl_group = "WinBar"
     end
 
+    -- override hl_group
+    hl_group = "WinBar"
+
     local buf_ft = vim.bo.filetype
 
     if buf_ft == "dapui_breakpoints" then
@@ -122,6 +125,8 @@ M.get_winbar = function()
 
   if not f.isempty(value) and f.get_buf_option "mod" then
     local mod = "%#LspCodeLens#" .. " " .. "%*"
+    -- override modified indicator 
+    mod = ""
     if navic_added then
       value = value .. " " .. mod
     else
