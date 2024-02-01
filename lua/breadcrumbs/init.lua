@@ -12,6 +12,7 @@ M.winbar_filetype_exclude = {
   "neo-tree",
   "neogitstatus",
   "NvimTree",
+  "Navbuddy",
   "Trouble",
   "alpha",
   "lir",
@@ -34,9 +35,14 @@ M.winbar_filetype_exclude = {
 }
 
 M.get_filename = function()
-  local filename = vim.fn.expand "%:."
-  local extension = vim.fn.expand "%:e"
-  local f = require "breadcrumbs.utils"
+  local filename = vim.fn.expand("%~:.")
+  local extension = vim.fn.expand("%:e")
+  local f = require("breadcrumbs.utils")
+
+  local fn = vim.fn
+  local function getcolor(group, attr)
+    return fn.synIDattr(fn.synIDtrans(fn.hlID(group)), attr)
+  end
 
   if not f.isempty(filename) then
     local file_icon, hl_group
@@ -52,8 +58,8 @@ M.get_filename = function()
       hl_group = "WinBar"
     end
 
-    -- вук  override hl_group
-    hl_group = "WinBar"
+    local fgcolor=getcolor(hl_group, "fg#")
+    vim.api.nvim_set_hl(0, "BreadcrumbsFileIcon", { fg=fgcolor, bg="#1e1e1e" })
 
     local buf_ft = vim.bo.filetype
 
@@ -77,7 +83,8 @@ M.get_filename = function()
       file_icon = ""
     end
 
-    return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. "%#WinBar#" .. filename .. "%*"
+    -- return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. "%#BreadcrumbsFileName#" .. filename .. "%*"
+    return " " .. "%#BreadcrumbsFileIcon#" .. file_icon .. "%*" .. " " .. "%#BreadcrumbsFileName#" .. filename .. "%*"
   end
 end
 
@@ -111,7 +118,7 @@ M.get_winbar = function()
   if excludes() then
     return
   end
-  local f = require "breadcrumbs.utils"
+  local f = require("breadcrumbs.utils")
   local value = M.get_filename()
 
   local navic_added = false
@@ -122,22 +129,22 @@ M.get_winbar = function()
       navic_added = true
     end
   end
-
-  -- вук  remove modified indicator
-  -- if not f.isempty(value) and f.get_buf_option "mod" then
-  --   local mod = "%#LspCodeLens#" .. " " .. "%*"
-  --   if navic_added then
-  --     value = value .. " " .. mod
-  --   else
-  --     value = value .. mod
-  --   end
-  -- end
-
-  local num_tabs = #vim.api.nvim_list_tabpages()
-  if num_tabs > 1 and not f.isempty(value) then
-    local tabpage_number = tostring(vim.api.nvim_tabpage_get_number(0))
-    value = value .. "%=" .. tabpage_number .. "/" .. tostring(num_tabs)
+  if not f.isempty(value) and f.get_buf_option "mod" then
+    -- local mod = "%#LspCodeLens#" .. " " .. "%*"
+    -- local mod = "%#LspCodeLens#" .. "⚫" .. "%*"
+    local mod = ""
+    if navic_added then
+      value = value .. " " .. mod
+    else
+      value = value .. mod
+    end
   end
+
+  -- local num_tabs = #vim.api.nvim_list_tabpages()
+  -- if num_tabs > 1 and not f.isempty(value) then
+  --   local tabpage_number = tostring(vim.api.nvim_tabpage_get_number(0))
+  --   value = value .. "%=" .. tabpage_number .. "/" .. tostring(num_tabs)
+  -- end
 
   local status_ok, _ = pcall(vim.api.nvim_set_option_value, "winbar", value, { scope = "local" })
   if not status_ok then
@@ -146,6 +153,7 @@ M.get_winbar = function()
 end
 
 M.setup = function()
+  vim.api.nvim_set_hl(0, "BreadcrumbsFileName", { bold = true, bg = "#1e1e1e", fg = "#a9a9a9" })
   vim.api.nvim_create_augroup("_winbar", {})
   vim.api.nvim_create_autocmd({
     "CursorHoldI",
@@ -171,4 +179,3 @@ M.setup = function()
 end
 
 return M
-
