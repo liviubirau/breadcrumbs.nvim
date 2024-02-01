@@ -34,7 +34,7 @@ M.winbar_filetype_exclude = {
 }
 
 M.get_filename = function()
-  local filename = vim.fn.expand "%:t"
+  local filename = vim.fn.expand "%:."
   local extension = vim.fn.expand "%:e"
   local f = require "breadcrumbs.utils"
 
@@ -52,7 +52,7 @@ M.get_filename = function()
       hl_group = "WinBar"
     end
 
-    -- override hl_group
+    -- вук  override hl_group
     hl_group = "WinBar"
 
     local buf_ft = vim.bo.filetype
@@ -124,9 +124,9 @@ M.get_winbar = function()
   end
 
   if not f.isempty(value) and f.get_buf_option "mod" then
-    local mod = "%#LspCodeLens#" .. " " .. "%*"
-    -- override modified indicator 
-    mod = ""
+    -- вук  override modified indicator 
+    -- local mod = "%#LspCodeLens#" .. " " .. "%*"
+    local mod = "%#LspCodeLens#" .. "%*"
     if navic_added then
       value = value .. " " .. mod
     else
