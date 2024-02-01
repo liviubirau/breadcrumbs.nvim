@@ -123,23 +123,21 @@ M.get_winbar = function()
     end
   end
 
-  if not f.isempty(value) and f.get_buf_option "mod" then
-    -- вук  override modified indicator 
-    -- local mod = "%#LspCodeLens#" .. " " .. "%*"
-    local mod = "%#LspCodeLens#" .. "%*"
-    if navic_added then
-      value = value .. " " .. mod
-    else
-      value = value .. mod
-    end
-  end
-
-  -- local num_tabs = #vim.api.nvim_list_tabpages()
-  --
-  -- if num_tabs > 1 and not f.isempty(value) then
-  --   local tabpage_number = tostring(vim.api.nvim_tabpage_get_number(0))
-  --   value = value .. "%=" .. tabpage_number .. "/" .. tostring(num_tabs)
+  -- вук  remove modified indicator
+  -- if not f.isempty(value) and f.get_buf_option "mod" then
+  --   local mod = "%#LspCodeLens#" .. " " .. "%*"
+  --   if navic_added then
+  --     value = value .. " " .. mod
+  --   else
+  --     value = value .. mod
+  --   end
   -- end
+
+  local num_tabs = #vim.api.nvim_list_tabpages()
+  if num_tabs > 1 and not f.isempty(value) then
+    local tabpage_number = tostring(vim.api.nvim_tabpage_get_number(0))
+    value = value .. "%=" .. tabpage_number .. "/" .. tostring(num_tabs)
+  end
 
   local status_ok, _ = pcall(vim.api.nvim_set_option_value, "winbar", value, { scope = "local" })
   if not status_ok then
