@@ -32,6 +32,8 @@ M.winbar_filetype_exclude = {
   "noice",
   "neotest-summary",
   "json.kulala_ui",
+  "text.kulala_ui",
+  "kulala_verbose_result.kulala_ui",
   "",
 }
 
