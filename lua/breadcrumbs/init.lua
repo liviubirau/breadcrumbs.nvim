@@ -31,6 +31,7 @@ M.winbar_filetype_exclude = {
   "notify",
   "noice",
   "neotest-summary",
+  "kulala",
   "",
 }
 
